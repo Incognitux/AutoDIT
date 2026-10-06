@@ -1,0 +1,5 @@
+{
+  "target_url": "http://127.0.0.1:5050",
+  "baseline_token": "mock-jwt-token-12345",
+  "test_user_id": 1
+}

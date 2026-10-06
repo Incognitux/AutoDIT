@@ -1,0 +1,20 @@
+Deterministic API Security Auditing Engine
+A testing framework that evaluates vulnerabilities using exact, predefined rules and structural maps (OpenAPI schemas) to produce repeatable, predictable results, contrasting with probabilistic scanners that rely on guessing endpoints or attack payloads.
+
+Automated Multi-Role State Simulation
+A testing mechanism that programmatically sequences HTTP requests using distinct authentication states (e.g., substituting User A's token for User B's token) to systematically identify broken access controls and unauthorized privilege escalation.
+
+Heuristic Data Fingerprinting
+The algorithmic analysis of JSON response payloads—utilizing techniques like string entropy calculation and pattern density—to detect the unintended exposure of sensitive structural data, such as internal database IDs, cryptographic hashes, or personally identifiable information (PII).
+
+Algorithmic Threat Prioritization Matrix
+A customized mathematical scoring model that calculates vulnerability severity by evaluating compounded API flaws. For example, an endpoint lacking both authentication and rate limiting receives an exponentially higher risk score than standard binary severity labels (High/Medium/Low).
+
+Context-Aware Security Testing
+An auditing approach where the engine adapts its execution based on the specific architectural blueprint (OpenAPI spec) and variable states of the target API, ensuring tests are highly relevant to the actual endpoints rather than firing generic, blind attack payloads.
+
+Pre-Commit CI/CD Testing Gate
+An automated security barrier that executes locally on a developer’s machine or during the pull-request phase. It blocks code from being merged into the main repository if structural vulnerabilities are detected, shifting security to the earliest point in the development cycle.
+
+False-Positive Alert Fatigue
+The desensitization developers experience when traditional security scanners flood them with hundreds of incorrect or irrelevant vulnerability warnings, leading to genuine security threats being ignored.
