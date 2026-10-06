@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
-[![Security](https://img.shields.io/badge/OWASP-API%20Security%20Top%2010-orange.svg)](https://owasp.org/www-project-api-security/)
+[![Security](https://img.shields.io/badge/OWASP-API%20Security%20Top%2010-orange.svg)](https://api-security.owasp.org/editions/2023/en/0x11-t10/)
 [![Design](https://img.shields.io/badge/Detection-Deterministic%20%26%20Zero--Config-brightgreen.svg)](#core-principles)
 
 **AutoDIT** is a deterministic, zero-configuration API security auditing engine built for developers and engineering teams. Designed to integrate natively into pre-commit hooks and CI/CD pipelines, AutoDIT verifies API endpoints against real-world vulnerabilities—producing reproducible, evidence-backed security reports without requiring complex enterprise configuration or costly manual penetration tests.
@@ -36,7 +36,7 @@ Traditional API scanners frequently suffer from slow crawl cycles, high costs, a
 
 ## Key Features & Detection Capabilities
 
-AutoDIT maps detected vulnerabilities directly to the **OWASP API Security Top 10** standard:
+AutoDIT maps detected vulnerabilities directly to the [OWASP API Security Top 10 (2023)](https://api-security.owasp.org/editions/2023/en/0x11-t10/) standard ([GitHub repository](https://github.com/OWASP/API-Security)):
 
 | Check Category | OWASP Mapping | Detection Mechanism |
 |---|---|---|
