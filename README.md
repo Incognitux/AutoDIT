@@ -82,7 +82,7 @@ pip install -r requirements.txt
 
 ### 3. Run the Vulnerable Mock API
 
-In a dedicated terminal window, start the local vulnerable Flask test server:
+In a dedicated terminal window, start the local vulnerable FastAPI test server:
 
 ```bash
 python testApp.py
