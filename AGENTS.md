@@ -31,39 +31,71 @@ Three modules plus a test target. Keep boundaries clean; modules communicate thr
 
 GraphQL is **foundation-only** for now: scaffolding and interfaces are fine, full checks are out of scope.
 
-## Suggested layout (assumed)
+## Codebase layout (src layout)
 
-```
+Follow a clean, lean modular structure. Rules for code organization:
+- **Split a file** when it crosses ~300 lines.
+- **Add a subdirectory** when it holds 4+ related files.
+
+```text
 autodit/
-  cli.py
-  ingestion/
-  scanner/
-    checks/          # one file per check, each implements BaseCheck
-    roles.py         # identity/token handling for multi-role simulation
-    fingerprints.py  # sensitive-data patterns
-  reporting/
-    prioritizer.py   # severity matrix
-    renderers/
-  models.py          # Endpoint, Finding, Evidence, Severity
-vuln_api/            # intentionally insecure test target
-tests/
-docs/
+  pyproject.toml           # build system, dependencies, CLI entrypoint (autodit)
+  src/
+    autodit/
+      __init__.py
+      __main__.py          # python -m autodit -> cli.main()
+      cli.py               # Click CLI commands and options (no business logic)
+      models.py            # typed models: Endpoint, Finding, Evidence, Severity, ScanConfig
+      ingestion/
+        parser.py          # OpenAPI 3.x validation & parsing (openapi-spec-validator)
+      scanner/
+        engine.py          # scan orchestrator
+        base_check.py      # BaseCheck ABC + CheckRegistry
+        http_client.py     # safe requests wrapper: timeouts, redaction, localhost restriction
+        roles.py           # identity/token handling for multi-role simulation
+        fingerprints.py    # sensitive-data regex patterns & entropy detection
+        checks/            # self-contained check plugins
+          auth.py          # AUTH-001 Multi-Role State Simulation
+          data.py          # DATA-001 Heuristic Data Fingerprinting
+          rate.py          # RATE-001 Rate-Limit Probing
+      reporting/
+        prioritizer.py     # compound threat severity matrix (pure function)
+        renderers.py       # JSON and Markdown report formatters
+  vuln_api/                # isolated test target (never packaged into wheel)
+    __main__.py            # python -m vuln_api
+    app.py                 # FastAPI app with vulnerable + hardened routes
+    openapi.yaml           # spec matching vuln_api routes
+  tests/                   # flat test suite
+    conftest.py            # fixtures & shared test configuration
+    test_models.py
+    test_parser.py
+    test_fingerprints.py   # positive + negative sample tests
+    test_prioritizer.py    # table-driven compound severity tests
+    test_roles.py
+    test_scan_vulnerable.py# asserts exact expected finding set against vuln_api
+    test_scan_hardened.py  # asserts zero findings against hardened routes
 ```
 
-## Tech stack and commands (assumed)
+## Tech stack and commands
 
-- Python 3.11+, HTTP via `requests`, spec parsing via `PyYAML` / an OpenAPI parser, tests via `pytest`.
-- Vulnerable test API: FastAPI or Flask.
+- Python 3.11+
+- CLI: `click`
+- HTTP: `requests`
+- Spec validation & parsing: `openapi-spec-validator`, `PyYAML`
+- Tests & test mocking: `pytest`, `pytest-httpserver`
+- Linter & formatter: `ruff`, type checker: `mypy`
+- Vulnerable test API: `FastAPI`, `uvicorn`
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-pytest                      # run all tests
-pytest tests/scanner -q     # one area
-ruff check . && ruff format .   # lint / format (assumed)
-python -m vuln_api          # start dummy vulnerable API on localhost
-autodit scan openapi.yaml --target http://localhost:8000
+pytest                          # run all tests
+pytest -k test_fingerprints -q  # run specific test
+ruff check . && ruff format .   # lint / format
+mypy src                        # type check
+python -m vuln_api              # start dummy API on 127.0.0.1:5050
+autodit scan openapi.yaml --target http://localhost:5050
 ```
 
 Run `pytest` and the linter before declaring any task done.

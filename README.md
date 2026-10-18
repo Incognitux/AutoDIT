@@ -128,20 +128,42 @@ python scanner.py
 
 ## Target Architecture & Modular Roadmap
 
-AutoDIT is evolving from standalone prototype scripts into a fully modular CLI package designed for zero-configuration pre-commit and CI usage:
+AutoDIT is evolving from standalone prototype scripts into a lean, modular CLI package designed for zero-configuration pre-commit and CI usage:
 
-```
+```text
 autodit/
-  cli.py             # Entrypoint: parses arguments, coordinates scan pipeline
-  models.py          # Typed models: Endpoint, Finding, Evidence, Severity
-  ingestion/         # Parses OpenAPI 3.x specifications into Endpoint models
-  scanner/           # Test execution pipeline
-    roles.py         # Multi-role identity/token handling
-    fingerprints.py  # Sensitive pattern matching & heuristic detectors
-    checks/          # Self-contained check plugins (AUTH-001, DATA-001, RATE-001)
-  reporting/         # Threat prioritization matrix, JSON/Markdown/HTML renderers
-vuln_api/            # Standalone, isolated vulnerable target for automated regression tests
-tests/               # Unit, integration, and hardened zero-finding regression tests
+  pyproject.toml           # Build system, dependencies, Click CLI entrypoint
+  src/
+    autodit/
+      __init__.py          # Package version
+      __main__.py          # python -m autodit entrypoint
+      cli.py               # Click CLI (zero business logic)
+      models.py            # Typed dataclasses: Endpoint, Finding, Evidence, Severity
+      ingestion/
+        parser.py          # OpenAPI 3.x validation & parsing (openapi-spec-validator)
+      scanner/
+        engine.py          # Scan orchestrator
+        base_check.py      # BaseCheck ABC + CheckRegistry
+        http_client.py     # Safe requests client (timeouts, redaction, localhost restriction)
+        roles.py           # Multi-role identity/token handling
+        fingerprints.py    # Sensitive pattern matching & heuristic detectors
+        checks/            # Self-contained check plugins (AUTH-001, DATA-001, RATE-001)
+      reporting/
+        prioritizer.py     # Threat prioritization matrix (pure function)
+        renderers.py       # JSON and Markdown report formatters
+  vuln_api/                # Isolated test target (not packaged into wheel)
+    __main__.py            # python -m vuln_api
+    app.py                 # FastAPI app with vulnerable and hardened routes
+    openapi.yaml           # Spec matching vuln_api routes
+  tests/                   # Flat test suite (pytest + pytest-httpserver)
+    conftest.py            # Fixtures & HTTP test server configuration
+    test_models.py
+    test_parser.py
+    test_fingerprints.py   # Positive & negative pattern tests
+    test_prioritizer.py    # Table-driven compound severity tests
+    test_roles.py
+    test_scan_vulnerable.py# Asserts exact expected finding set against vuln_api
+    test_scan_hardened.py  # Asserts zero findings against hardened routes
 ```
 
 ### Planned CLI Workflow
@@ -198,14 +220,23 @@ AutoDIT is strictly a **vulnerability detection tool**, not an offensive exploit
 ## Project Structure
 
 ```text
-Autodit/
+autodit/
 ├── AGENTS.md            # Agent instructions and architectural specifications
 ├── README.md            # Project documentation and usage guide
-├── config.json          # Prototype scanner configuration
 ├── lingoBingo.txt       # Domain terminology and security concepts
-├── requirements.txt     # Python package dependencies
-├── scanner.py           # Prototype security scanner implementation
-└── testApp.py           # Intentionally vulnerable test API server
+├── pyproject.toml       # Build metadata, Click CLI entrypoint, dependencies
+├── src/                 # Main package (src layout)
+│   └── autodit/
+│       ├── __init__.py
+│       ├── __main__.py  # python -m autodit entrypoint
+│       ├── cli.py       # Click CLI commands
+│       ├── models.py    # Endpoint, Finding, Evidence, Severity models
+│       ├── ingestion/   # OpenAPI 3.x parser & validator
+│       ├── scanner/     # Multi-role, fingerprinting, and check plugins
+│       │   └── checks/  # Individual check implementations
+│       └── reporting/   # Threat prioritizer matrix & JSON/MD renderers
+├── vuln_api/            # Isolated test API server & OpenAPI specification
+└── tests/               # Unit and integration test suite
 ```
 
 ---
