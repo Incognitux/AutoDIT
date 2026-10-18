@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: AutoDIT Vulnerable & Hardened Test API
+  version: 1.0.0
+  description: Test target containing deliberately vulnerable and hardened routes.
+paths:
+  /api/v1/health:
+    get:
+      summary: Health Check
+      responses:
+        '200':
+          description: Healthy status response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+  /api/v1/users/{user_id}:
+    get:
+      summary: Get User Profile
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User profile payload
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: User not found
+  /api/v1/login:
+    post:
+      summary: User Login
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+  /api/v1/admin/dashboard:
+    get:
+      summary: Admin Dashboard
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Dashboard metrics
+  /api/v1/hardened/users/{user_id}:
+    get:
+      summary: Get Hardened User Profile
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sanitized user profile payload
+        '404':
+          description: User not found
+  /api/v1/hardened/admin/dashboard:
+    get:
+      summary: Hardened Admin Dashboard
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Dashboard metrics
+        '401':
+          description: Unauthorized
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

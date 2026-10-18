@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autodit"
+version = "0.1.0"
+description = "Deterministic, zero-configuration API security auditing engine"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later" }
+dependencies = [
+    "click>=8.1.0",
+    "requests>=2.31.0",
+    "openapi-spec-validator>=0.7.0",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-httpserver>=1.0.8",
+    "ruff>=0.3.0",
+    "mypy>=1.9.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+]
+
+[project.scripts]
+autodit = "autodit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
